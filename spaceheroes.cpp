@@ -71,6 +71,10 @@ int main(int argc, char ** argv)
 			{
 				std::cout << "You are pressing RIGHT button\n";
 			}
+			else if (mainEvent->key.keysym.sym == SDLK_ESCAPE)
+			{
+				exit = true;
+			}
 		}
 		SDL_PollEvent(mainEvent);
 		SDL_RenderClear(renderer);
