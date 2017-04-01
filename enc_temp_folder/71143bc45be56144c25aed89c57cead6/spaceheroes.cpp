@@ -52,35 +52,27 @@ int main(int argc, char ** argv)
 	SDL_RenderPresent(renderer);
 	SDL_Event *mainEvent = new SDL_Event();
 	while (!exit && mainEvent->type != SDL_QUIT)
-	{
-		if (mainEvent->type == SDL_KEYDOWN)
 		{
-			if (mainEvent->key.keysym.sym == SDLK_UP)
+			if (mainEvent->type == SDL_KEYDOWN && mainEvent->key.keysym.sym == SDLK_UP)
 			{
 				std::cout << "You are pressing UP button\n";
-			} 
-			else if (mainEvent->key.keysym.sym == SDLK_DOWN)
+			}
+			else if (mainEvent->type == SDL_KEYDOWN && mainEvent->key.keysym.sym == SDLK_DOWN)
 			{
 				std::cout << "You are pressing DOWN button\n";
 			}
-			else if (mainEvent->key.keysym.sym == SDLK_LEFT)
-			{
-				std::cout << "You are pressing LEFT button\n";
-			}
-			else if (mainEvent->key.keysym.sym == SDLK_RIGHT)
-			{
-				std::cout << "You are pressing RIGHT button\n";
-			}
+			SDL_PollEvent(mainEvent);
+			SDL_RenderClear(renderer);
+			std::cout << graphics::GetRandomNumber() << std::endl;
+			SDL_SetRenderDrawColor(renderer, graphics::GetRandomNumber(), graphics::GetRandomNumber(), graphics::GetRandomNumber(), 255);
+			SDL_RenderFillRect(renderer, &r);
+			SDL_RenderPresent(renderer);
 		}
-		SDL_PollEvent(mainEvent);
-		SDL_RenderClear(renderer);
-		std::cout << graphics::GetRandomNumber() << std::endl;
-		SDL_SetRenderDrawColor(renderer, graphics::GetRandomNumber(), graphics::GetRandomNumber(), graphics::GetRandomNumber(), 255);
-		SDL_RenderFillRect(renderer, &r);
-		SDL_RenderPresent(renderer);
-	}
+			
+		SDL_DestroyWindow(window);
+			
+	
 
-	SDL_DestroyWindow(window);		
 	return 0;
 }
 
