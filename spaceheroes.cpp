@@ -33,11 +33,20 @@ int main(int argc, char ** argv)
 	}
 
 	SDL_RenderSetLogicalSize(renderer, width, height);
-	SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
 
 	SDL_RenderClear(renderer);
+	
+	SDL_Rect r;
+	r.x = 50;
+	r.y = 50;
+	r.w = 50;
+	r.h = 50;
 
-	SDL_Quit();
+	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+	//SDL_RenderDrawRect(renderer, &r);
+	SDL_RenderFillRect(renderer, &r);
+	SDL_RenderPresent(renderer);
 
 	return 0;
 }
