@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include <iostream>
 #include <SDL.h>
+#include "graphics.h"
 
 int main(int argc, char ** argv)
 {
@@ -15,8 +16,8 @@ int main(int argc, char ** argv)
 		return -1;
 	}
 
-	int width = 256;
-	int height = 144;
+	int width = 500;
+	int height = 200;
 	SDL_Window* window;
 
 	window = SDL_CreateWindow("hello", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
@@ -50,7 +51,6 @@ int main(int argc, char ** argv)
 	SDL_RenderFillRect(renderer, &r);
 	SDL_RenderPresent(renderer);
 	SDL_Event *mainEvent = new SDL_Event();
-	
 	while (!exit && mainEvent->type != SDL_QUIT)
 		{
 			if (mainEvent->type == SDL_KEYDOWN && mainEvent->key.keysym.sym == SDLK_UP)
@@ -63,7 +63,8 @@ int main(int argc, char ** argv)
 			}
 			SDL_PollEvent(mainEvent);
 			SDL_RenderClear(renderer);
-			SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+			std::cout << graphics::GetRandomNumber() << std::endl;
+			SDL_SetRenderDrawColor(renderer, graphics::GetRandomNumber(), graphics::GetRandomNumber(), graphics::GetRandomNumber(), 255);
 			SDL_RenderFillRect(renderer, &r);
 			SDL_RenderPresent(renderer);
 		}
