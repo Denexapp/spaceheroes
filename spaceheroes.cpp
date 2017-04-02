@@ -7,6 +7,7 @@
 #include "graphics.h"
 #include <time.h>
 #include <ctime>
+#include <math.h>
 
 int main(int argc, char ** argv)
 {
@@ -18,7 +19,10 @@ int main(int argc, char ** argv)
 	time_t timev;
 	std::time_t result = std::time(nullptr);
 	std::asctime(std::localtime(&result));
-
+	int prevTime = 0;
+	int currentTime = 0;
+	float deltaTime = 0;
+	int FPS = 60;
 
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
@@ -51,12 +55,15 @@ int main(int argc, char ** argv)
 
 	SDL_RenderClear(renderer);
 	
+	float x_coord = 50;
+	float y_coord = 50;
+
 	SDL_Rect r;
-	r.x = 50;
-	r.y = 50;
+	r.x = round(x_coord);
+	r.y = round(y_coord);
 	r.w = 50;
 	r.h = 50;
-	int rSpeed = 1;
+	float rSpeed = 3.0f;
 
 	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 	//SDL_RenderDrawRect(renderer, &r);
@@ -65,42 +72,53 @@ int main(int argc, char ** argv)
 	SDL_Event *mainEvent = new SDL_Event();
 	while (!exit && mainEvent->type != SDL_QUIT)
 	{
+		prevTime = currentTime;
+		
 		if (mainEvent->type == SDL_KEYDOWN)
 		{
 			if (mainEvent->key.keysym.sym == SDLK_UP)
 			{
-				r.y -= rSpeed;
+				y_coord -= rSpeed;
 			} 
 			else if (mainEvent->key.keysym.sym == SDLK_DOWN)
 			{
-				r.y += rSpeed;
+				y_coord += rSpeed;
 			}
 			else if (mainEvent->key.keysym.sym == SDLK_LEFT)
 			{
-				r.x -= rSpeed;
+				x_coord -= rSpeed;
 			}
 			else if (mainEvent->key.keysym.sym == SDLK_RIGHT)
 			{
-				r.x += rSpeed;
+				x_coord += rSpeed;
 			}
 			else if (mainEvent->key.keysym.sym == SDLK_ESCAPE)
 			{
 				exit = true;
 			}
-			if (r.x < 0)
-				r.x = width;
+			if (x_coord < 0)
+				x_coord = width;
 			else if (r.x > width)
-				r.x = 0;
-			if (r.y < 0)
-				r.y = height;
+				x_coord = 0;
+			if (y_coord < 0)
+				y_coord = height;
 			else if (r.y > height)
-				r.y = 0;
+				y_coord = 0;
 		}
+		r.x = round(x_coord);
+		r.y = round(y_coord);
 		SDL_PollEvent(mainEvent);
 		SDL_RenderClear(renderer);
 		SDL_SetRenderDrawColor(renderer, graphics::GetRandomNumber(), graphics::GetRandomNumber(), graphics::GetRandomNumber(), 255);
 		SDL_RenderFillRect(renderer, &r);
 		SDL_RenderPresent(renderer);
+		currentTime = SDL_GetTicks();
+		deltaTime = SDL_GetTicks() - prevTime;
+		if (1000 / FPS > deltaTime)
+		{
+			std::cout << deltaTime << std::endl;
+			SDL_Delay(1000 / FPS - deltaTime);
+		}
 	}
 
 	SDL_DestroyWindow(window);		
