@@ -5,10 +5,21 @@
 #include <iostream>
 #include <SDL.h>
 #include "graphics.h"
+#include <time.h>
+#include <ctime>
 
 int main(int argc, char ** argv)
 {
 	bool exit = false;
+	const int FRAMES_PER_SECOND = 60;
+	float dt; //delta time in seconds
+	float clock; //last time sample in seconds
+	float render_timer; //time control for rendering
+	time_t timev;
+	std::time_t result = std::time(nullptr);
+	std::asctime(std::localtime(&result));
+
+
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
 	{
@@ -16,8 +27,8 @@ int main(int argc, char ** argv)
 		return -1;
 	}
 
-	int width = 500;
-	int height = 200;
+	int width = 1000;
+	int height = 400;
 	SDL_Window* window;
 
 	window = SDL_CreateWindow("hello", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
@@ -45,6 +56,7 @@ int main(int argc, char ** argv)
 	r.y = 50;
 	r.w = 50;
 	r.h = 50;
+	int rSpeed = 1;
 
 	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 	//SDL_RenderDrawRect(renderer, &r);
@@ -57,28 +69,35 @@ int main(int argc, char ** argv)
 		{
 			if (mainEvent->key.keysym.sym == SDLK_UP)
 			{
-				std::cout << "You are pressing UP button\n";
+				r.y -= rSpeed;
 			} 
 			else if (mainEvent->key.keysym.sym == SDLK_DOWN)
 			{
-				std::cout << "You are pressing DOWN button\n";
+				r.y += rSpeed;
 			}
 			else if (mainEvent->key.keysym.sym == SDLK_LEFT)
 			{
-				std::cout << "You are pressing LEFT button\n";
+				r.x -= rSpeed;
 			}
 			else if (mainEvent->key.keysym.sym == SDLK_RIGHT)
 			{
-				std::cout << "You are pressing RIGHT button\n";
+				r.x += rSpeed;
 			}
 			else if (mainEvent->key.keysym.sym == SDLK_ESCAPE)
 			{
 				exit = true;
 			}
+			if (r.x < 0)
+				r.x = width;
+			else if (r.x > width)
+				r.x = 0;
+			if (r.y < 0)
+				r.y = height;
+			else if (r.y > height)
+				r.y = 0;
 		}
 		SDL_PollEvent(mainEvent);
 		SDL_RenderClear(renderer);
-		std::cout << graphics::GetRandomNumber() << std::endl;
 		SDL_SetRenderDrawColor(renderer, graphics::GetRandomNumber(), graphics::GetRandomNumber(), graphics::GetRandomNumber(), 255);
 		SDL_RenderFillRect(renderer, &r);
 		SDL_RenderPresent(renderer);
