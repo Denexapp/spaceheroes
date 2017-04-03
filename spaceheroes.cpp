@@ -8,23 +8,13 @@
 #include <time.h>
 #include <ctime>
 #include <math.h>
+#include "FpsLocker.h"
 
 int main(int argc, char ** argv)
 {
 	bool exit = false;
-	const int FRAMES_PER_SECOND = 60;
-	float dt; //delta time in seconds
-	float clock; //last time sample in seconds
-	float render_timer; //time control for rendering
-	time_t timev;
-	std::time_t result = std::time(nullptr);
-	std::asctime(std::localtime(&result));
-	int prevTime = 0;
-	int currentTime = 0;
-	float deltaTime = 0;
-	int FPS = 60;
 
-
+	FpsLocker fpsLocker(60);
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
 	{
 		std::cout << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
@@ -72,7 +62,7 @@ int main(int argc, char ** argv)
 	SDL_Event *mainEvent = new SDL_Event();
 	while (!exit && mainEvent->type != SDL_QUIT)
 	{
-		prevTime = currentTime;
+		fpsLocker.updatePrevTime();
 		
 		if (mainEvent->type == SDL_KEYDOWN)
 		{
@@ -108,17 +98,13 @@ int main(int argc, char ** argv)
 		r.x = round(x_coord);
 		r.y = round(y_coord);
 		SDL_PollEvent(mainEvent);
+		SDL_SetRenderDrawColor(renderer, 100, 100, 255, 255);
 		SDL_RenderClear(renderer);
-		SDL_SetRenderDrawColor(renderer, graphics::GetRandomNumber(), graphics::GetRandomNumber(), graphics::GetRandomNumber(), 255);
+		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL_RenderFillRect(renderer, &r);
 		SDL_RenderPresent(renderer);
-		currentTime = SDL_GetTicks();
-		deltaTime = SDL_GetTicks() - prevTime;
-		if (1000 / FPS > deltaTime)
-		{
-			std::cout << deltaTime << std::endl;
-			SDL_Delay(1000 / FPS - deltaTime);
-		}
+		fpsLocker.computeAndExecDelay();
+
 	}
 
 	SDL_DestroyWindow(window);		
