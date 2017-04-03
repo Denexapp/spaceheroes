@@ -10,22 +10,25 @@
 #include <math.h>
 #include "FpsLocker.h"
 
+
 int main(int argc, char ** argv)
 {
 	bool exit = false;
+	int maxFps = 60;
+	int windowWidth = 1000;
+	int windowHeight = 400;
 
-	FpsLocker fpsLocker(60);
+	FpsLocker fpsLocker(maxFps);
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
 	{
 		std::cout << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
 		return -1;
 	}
 
-	int width = 1000;
-	int height = 400;
+	
 	SDL_Window* window;
 
-	window = SDL_CreateWindow("hello", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
+	window = SDL_CreateWindow("hello", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, 0);
 	if (window == nullptr)
 	{
 		std::cout << "Failed to create window: " << SDL_GetError();
@@ -40,7 +43,7 @@ int main(int argc, char ** argv)
 		std::cout << "Failed to create renderer: " << SDL_GetError();
 	}
 
-	SDL_RenderSetLogicalSize(renderer, width, height);
+	SDL_RenderSetLogicalSize(renderer, windowWidth, windowHeight);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
 
 	SDL_RenderClear(renderer);
@@ -59,6 +62,7 @@ int main(int argc, char ** argv)
 	//SDL_RenderDrawRect(renderer, &r);
 	SDL_RenderFillRect(renderer, &r);
 	SDL_RenderPresent(renderer);
+	//TODO: Event system significantly reduce perfomance
 	SDL_Event *mainEvent = new SDL_Event();
 	while (!exit && mainEvent->type != SDL_QUIT)
 	{
@@ -87,12 +91,12 @@ int main(int argc, char ** argv)
 				exit = true;
 			}
 			if (x_coord < 0)
-				x_coord = width;
-			else if (r.x > width)
+				x_coord = windowWidth;
+			else if (r.x > windowWidth)
 				x_coord = 0;
 			if (y_coord < 0)
-				y_coord = height;
-			else if (r.y > height)
+				y_coord = windowHeight;
+			else if (r.y > windowHeight)
 				y_coord = 0;
 		}
 		r.x = round(x_coord);
