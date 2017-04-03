@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "FpsLocker.h"
 #include <SDL.h>
+#include <iostream>
 
 
 FpsLocker::FpsLocker(int FPS)
@@ -21,6 +22,7 @@ void FpsLocker::updatePrevTime() {
 void FpsLocker::computeAndExecDelay() {
 	currentTime_ = SDL_GetTicks();
 	deltaTime_ = currentTime_ - prevTime_;
+	
 	if (normalFrameTime_ > deltaTime_)
 		SDL_Delay(normalFrameTime_ - deltaTime_);
 }

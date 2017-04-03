@@ -9,6 +9,7 @@
 #include <ctime>
 #include <math.h>
 #include "FpsLocker.h"
+#include <vector>
 
 
 int main(int argc, char ** argv)
@@ -17,8 +18,10 @@ int main(int argc, char ** argv)
 	int maxFps = 60;
 	int windowWidth = 1000;
 	int windowHeight = 400;
-
 	FpsLocker fpsLocker(maxFps);
+	//const Uint8 * keysState = SDL_GetKeyboardState(NULL);
+
+
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1)
 	{
 		std::cout << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
@@ -57,61 +60,102 @@ int main(int argc, char ** argv)
 	r.w = 50;
 	r.h = 50;
 	float rSpeed = 3.0f;
+	std::vector<float> movingVector(2);
+	
 
 	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 	//SDL_RenderDrawRect(renderer, &r);
 	SDL_RenderFillRect(renderer, &r);
 	SDL_RenderPresent(renderer);
-	//TODO: Event system significantly reduce perfomance
-	SDL_Event *mainEvent = new SDL_Event();
-	while (!exit && mainEvent->type != SDL_QUIT)
+
+	//	Event System
+	//	TODO: Event system significantly reduce perfomance
+	SDL_Event mainEvent;
+	SDL_PollEvent(&mainEvent);
+
+	while (!exit && mainEvent.type != SDL_QUIT)
 	{
 		fpsLocker.updatePrevTime();
-		
-		if (mainEvent->type == SDL_KEYDOWN)
+		while (SDL_PollEvent(&mainEvent))
 		{
-			if (mainEvent->key.keysym.sym == SDLK_UP)
+			switch (mainEvent.type)
 			{
-				y_coord -= rSpeed;
-			} 
-			else if (mainEvent->key.keysym.sym == SDLK_DOWN)
-			{
-				y_coord += rSpeed;
+			case SDL_KEYDOWN:
+				switch (mainEvent.key.keysym.sym)
+				{
+				case SDLK_UP:
+					movingVector[1] = -rSpeed;
+					break;
+				case SDLK_DOWN:
+					movingVector[1] = rSpeed;
+					break;
+				case SDLK_LEFT:
+					movingVector[0] = -rSpeed;
+					break;
+				case SDLK_RIGHT:
+					movingVector[0] = rSpeed;
+					break;
+				case SDLK_ESCAPE:
+					exit = true;
+					break;
+				default:
+					break;
+				}
+				break;
+			case SDL_KEYUP:
+				switch (mainEvent.key.keysym.sym)
+				{
+				case SDLK_UP:
+					if (movingVector[1] < 0)
+						movingVector[1] = 0;
+					break;
+				case SDLK_DOWN:
+					if (movingVector[1] > 0)
+						movingVector[1] = 0;
+					break;
+				case SDLK_LEFT:
+					if (movingVector[0] < 0)
+
+						movingVector[0] = 0;
+					break;
+				case SDLK_RIGHT:
+					if (movingVector[0] > 0)
+						movingVector[0] = 0;
+					break;
+				default:
+					break;
+				}
+				break;
+			default:
+				break;
 			}
-			else if (mainEvent->key.keysym.sym == SDLK_LEFT)
-			{
-				x_coord -= rSpeed;
-			}
-			else if (mainEvent->key.keysym.sym == SDLK_RIGHT)
-			{
-				x_coord += rSpeed;
-			}
-			else if (mainEvent->key.keysym.sym == SDLK_ESCAPE)
-			{
-				exit = true;
-			}
-			if (x_coord < 0)
-				x_coord = windowWidth;
-			else if (r.x > windowWidth)
-				x_coord = 0;
-			if (y_coord < 0)
-				y_coord = windowHeight;
-			else if (r.y > windowHeight)
-				y_coord = 0;
+
 		}
+		x_coord += movingVector[0];
+		y_coord += movingVector[1];
+		if (x_coord < 0)
+			x_coord = windowWidth;
+		else if (r.x > windowWidth)
+			x_coord = 0;
+		if (y_coord < 0)
+			y_coord = windowHeight;
+		else if (r.y > windowHeight)
+			y_coord = 0;
+		//	Render
 		r.x = round(x_coord);
 		r.y = round(y_coord);
-		SDL_PollEvent(mainEvent);
 		SDL_SetRenderDrawColor(renderer, 100, 100, 255, 255);
 		SDL_RenderClear(renderer);
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		SDL_RenderFillRect(renderer, &r);
 		SDL_RenderPresent(renderer);
+
 		fpsLocker.computeAndExecDelay();
+		}
+		
+		
 
-	}
-
-	SDL_DestroyWindow(window);		
-	return 0;
+		SDL_DestroyWindow(window);		
+		return 0;
 }
 
