@@ -6,9 +6,9 @@ public:
 	~FpsLocker();
 private:
 	int FPS_;
-	float currentTime_;
-	float prevTime_;
-	float deltaTime_;
+	long currentTime_;
+	long prevTime_;
+	long deltaTime_;
 	float normalFrameTime_;
 public:	
 	void updatePrevTime();
