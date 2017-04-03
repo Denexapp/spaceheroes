@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "MainCharacter.h"
 #include <iostream>
+#include "UDPClient.h"
 
 
 MainCharacter::MainCharacter(float maxSpeed, float accel, int width, int height)
@@ -21,11 +22,13 @@ MainCharacter::MainCharacter(float maxSpeed, float accel, int width, int height)
 
 	x_ = width;
 	y_ = height;
+	
 }
 
 
 MainCharacter::~MainCharacter()
 {
+	
 }
 
 void MainCharacter::handleInput(SDL_Event *mainEvent)
@@ -46,6 +49,12 @@ void MainCharacter::handleInput(SDL_Event *mainEvent)
 			break;
 		case SDLK_RIGHT:
 			holdingKeys_[1] = true;
+			break;
+		case SDLK_F1:
+			_udpClient.setupClient();
+			break;
+		case SDLK_F2:
+			_udpClient.sendMsg("Hello nigga!");
 			break;
 		default:
 			break;

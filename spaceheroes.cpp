@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include <iostream>
 #include <SDL.h>
+
 #include "graphics.h"
 #include <time.h>
 #include <ctime>
@@ -11,6 +12,7 @@
 #include "FpsLocker.h"
 #include <vector>
 #include "MainCharacter.h"
+
 
 
 int main(int argc, char ** argv)

@@ -1,4 +1,5 @@
 #pragma once
+#include "UDPClient.h"
 #include <SDL.h>
 #include <vector>
 class MainCharacter
@@ -19,5 +20,6 @@ private:
 	float slowAccel_;
 	std::vector<float> currentSpeed_;
 	std::vector<bool> holdingKeys_;
+	UDPClient _udpClient;
 };
 
